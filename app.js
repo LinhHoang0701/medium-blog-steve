@@ -40,9 +40,7 @@ if (!isProduction) {
 if (isProduction) {
   mongoose.connect(process.env.MONGODB_URI);
 } else {
-  mongoose.connect(
-    "mongodb+srv://admin:admin@cluster0.c6xch.mongodb.net/conduit?retryWrites=true&w=majority"
-  );
+  mongoose.connect("mongodb://localhost/conduit");
   mongoose.set("debug", true);
 }
 
