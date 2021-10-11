@@ -7,10 +7,10 @@ var http = require("http"),
   cors = require("cors"),
   passport = require("passport"),
   errorhandler = require("errorhandler"),
-  mongoose = require("mongoose");
+  mongoose = require("mongoose"),
+  dotenv = require("dotenv");
 
-var isProduction = process.env.NODE_ENV === "production";
-
+dotenv.config();
 // Create global app object
 var app = express();
 
@@ -33,16 +33,21 @@ app.use(
   })
 );
 
-if (!isProduction) {
-  app.use(errorhandler());
-}
+// if (!isProduction) {
+//   app.use(errorhandler());
+// }
 
-if (isProduction) {
-  mongoose.connect(process.env.MONGODB_URI);
-} else {
-  mongoose.connect("mongodb://localhost/conduit");
-  mongoose.set("debug", true);
-}
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("success");
+    var server = app.listen(process.env.PORT || 3000, function () {
+      console.log("Listening on port " + server.address().port);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 require("./models/User");
 require("./models/Article");
@@ -62,20 +67,20 @@ app.use(function (req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (!isProduction) {
-  app.use(function (err, req, res, next) {
-    console.log(err.stack);
+// if (!isProduction) {
+//   app.use(function (err, req, res, next) {
+//     console.log(err.stack);
 
-    res.status(err.status || 500);
+//     res.status(err.status || 500);
 
-    res.json({
-      errors: {
-        message: err.message,
-        error: err,
-      },
-    });
-  });
-}
+//     res.json({
+//       errors: {
+//         message: err.message,
+//         error: err,
+//       },
+//     });
+//   });
+// }
 
 // production error handler
 // no stacktraces leaked to user
@@ -87,9 +92,4 @@ app.use(function (err, req, res, next) {
       error: {},
     },
   });
-});
-
-// finally, let's start our server...
-var server = app.listen(process.env.PORT || 3000, function () {
-  console.log("Listening on port " + server.address().port);
 });
