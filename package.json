@@ -4,7 +4,7 @@
   "description": "conduit on node",
   "main": "app.js",
   "engines": {
-     "npm": "6.x"
+     "yarn": "1.x"
   },
   "scripts": {
     "mongo:start": "docker run --name realworld-mongo -p 27017:27017 mongo & sleep 5",
